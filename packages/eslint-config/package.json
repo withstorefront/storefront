@@ -1,0 +1,28 @@
+{
+  "name": "eslint-config",
+  "private": true,
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "exports": {
+    ".": "./eslint.config.mjs"
+  },
+  "scripts": {
+    "lint:scripts": "eslint ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "eslint-config-prettier": "^9.0.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.11.1",
+    "@typescript-eslint/eslint-plugin": "^8.8.0",
+    "@typescript-eslint/parser": "^8.8.0",
+    "eslint": "^9.11.1",
+    "eslint-plugin-prettier": "^5.2.1",
+    "prettier-config": "^1.0.0",
+    "typescript-eslint": "^8.8.0"
+  }
+}
