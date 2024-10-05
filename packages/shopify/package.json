@@ -1,15 +1,14 @@
 {
-  "name": "@withstorefront/storefront",
+  "name": "@withstorefront/shopify",
   "version": "0.1.0",
-  "description": "",
-  "license": "FSL-1.1-Apache-2.0",
+  "description": "Integrate your Storefront site with Shopify.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/withstorefront/storefront.git",
-    "directory": "packages/storefront"
+    "url": "git+https://github.com/withstorefront/storefront.git",
+    "directory": "packages/shopify"
   },
   "bugs": "https://github.com/withstorefront/storefront/issues",
-  "homepage": "https://github.com/withstorefront/storefront",
+  "homepage": "https://github.com/withstorefront/storefront#readme",
   "type": "module",
   "author": "withstorefront",
   "main": "./dist/index.js",
@@ -20,8 +19,9 @@
   "keywords": [
     "withstorefront",
     "storefront",
+    "ecommerce",
     "e-commerce",
-    "ecommerce"
+    "shopify"
   ],
   "scripts": {
     "build": "npm run clean && tsc",
@@ -29,10 +29,7 @@
     "lint": "eslint . --fix",
     "prepack": "npm run clean && npm run build"
   },
-  "devDependencies": {
-    "eslint-config": "^1.0.0",
-    "prettier-config": "^1.0.0",
-    "rimraf": "^6.0.1",
-    "typescript": "^5.6.2"
+  "dependencies": {
+    "@withstorefront/storefront": "^0.1.0"
   }
 }

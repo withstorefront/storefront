@@ -1,0 +1,46 @@
+{
+  "name": "@withstorefront/astro",
+  "version": "0.1.0",
+  "description": "Use Storefront to power your Astro e-commerce site.",
+  "author": "withstorefront",
+  "license": "FSL-1.1-Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/withstorefront/storefront.git",
+    "directory": "packages/astro"
+  },
+  "bugs": "https://github.com/withstorefront/storefront/issues",
+  "homepage": "https://github.com/withstorefront/storefront#readme",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.js",
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "withstorefront",
+    "storefront",
+    "ecommerce",
+    "e-commerce",
+    "astro",
+    "withastro"
+  ],
+  "scripts": {
+    "build": "npm run clean && tsc",
+    "clean": "rimraf dist",
+    "lint": "eslint . --fix",
+    "prepack": "npm run clean && npm run build"
+  },
+  "devDependencies": {
+    "@withstorefront/storefront": "^0.1.0",
+    "astro": "^4.15.11",
+    "eslint-config": "^1.0.0",
+    "prettier-config": "^1.0.0",
+    "rimraf": "^6.0.1"
+  },
+  "peerDependencies": {
+    "eslint-config": "^1.0.0",
+    "prettier-config": "^1.0.0",
+    "astro": "^3.0.0 || ^4.0.0"
+  }
+}
