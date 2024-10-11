@@ -1,0 +1,9 @@
+---
+import type { Image } from "@withstorefront/storefront";
+
+export type Props = Image;
+
+const { url, alt, width, height } = Astro.props;
+---
+
+<img src={url} {alt} {width} {height} />

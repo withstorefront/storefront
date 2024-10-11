@@ -1,3 +1,4 @@
+import { SelectedOption } from "./cart.js";
 import type { Image, Measurement } from "./common.js";
 
 export interface ProductPrice {
@@ -60,7 +61,7 @@ export interface ProductVariant {
   /**
    * List of product options.
    */
-  options: ProductOption[];
+  options: SelectedOption[];
   /**
    * The product variant’s price after all discounts are applied.
    */

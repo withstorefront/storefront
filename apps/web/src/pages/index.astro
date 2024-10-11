@@ -1,7 +1,7 @@
 ---
 import { storefront } from "../storefront";
 
-console.log(storefront);
+const products = await storefront.products.getAll({});
 ---
 
 <html lang="en">
@@ -10,9 +10,22 @@ console.log(storefront);
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
-    <title>Astro</title>
+    <title>Storefront</title>
   </head>
   <body>
-    <h1>Astro</h1>
+    <h1>Storefront</h1>
+    <ul>
+      {
+        products.map((product) => (
+          <li>
+            <article>
+              <h3>
+                <a href={`/products/${product.slug}`}>{product.name}</a>
+              </h3>
+            </article>
+          </li>
+        ))
+      }
+    </ul>
   </body>
 </html>

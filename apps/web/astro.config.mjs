@@ -12,6 +12,7 @@ const { SHOPIFY_STORE_DOMAIN, SHOPIFY_STOREFRONT_ACCESS_TOKEN } = loadEnv(
 // https://astro.build/config
 export default defineConfig({
   site: "https://withstorefront.com",
+  output: "server",
   integrations: [
     storefront(
       shopify({

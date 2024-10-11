@@ -30,9 +30,9 @@ export type ProductFilter = "featured" | "best_selling" | "newest";
 export interface Provider {
   cart: {
     get: (cartId: string) => Promise<Cart | null>;
-    addItem: (item: CartItemBody) => Promise<Cart | null>;
-    updateItem: (item: CartLineItem) => Promise<Cart | null>;
-    removeItem: (item: CartLineItem) => Promise<Cart | null>;
+    addItem: (cartId: string, item: CartItemBody) => Promise<Cart | null>;
+    updateItem: (cartId: string, item: CartLineItem) => Promise<Cart | null>;
+    removeItem: (cartId: string, item: CartLineItem) => Promise<Cart | null>;
   };
   checkout: {
     get: (cartId: string) => Promise<Checkout | null>;
@@ -44,9 +44,6 @@ export interface Provider {
       ids?: string[];
       first?: number;
     }): Promise<Product[]>;
-    getAllByPath(first?: number): Promise<Pick<Product, "path">[]>;
-    getOne(
-      params: { path: string; slug?: never } | { path?: never; slug: string },
-    ): Promise<Product | null>;
+    getOne(params: { slug: string }): Promise<Product | null>;
   };
 }

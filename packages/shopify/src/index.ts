@@ -1,5 +1,15 @@
+import { createStorefrontApiClient } from "@shopify/storefront-api-client";
 import { Provider, StorefrontAdapter } from "@withstorefront/storefront";
 import pkg from "../package.json";
+import fetcher from "./fetcher.js";
+import { getProductQuery, getProductsQuery } from "./queries/products.js";
+import { normalizeCart, normalizeProduct } from "./normalize.js";
+import { getCartQuery } from "./queries/cart.js";
+import {
+  addToCartMutation,
+  editCartItemsMutation,
+  removeFromCartMutation,
+} from "./mutations/cart.js";
 
 export interface ShopifyOptions {
   domain: string;
@@ -17,19 +27,83 @@ export function shopify(
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 export default function shopifyProvider(options: ShopifyOptions): Provider {
+  const shopifyFetch = fetcher(options);
+
+  const client = createStorefrontApiClient({
+    storeDomain: options.domain,
+    apiVersion: "2024-10",
+    privateAccessToken: options.accessToken,
+  });
+
   return {
     cart: {
       async get(cartId) {
-        return null;
+        const { data, errors, extensions } = await client.request(
+          getCartQuery,
+          {
+            variables: {
+              cartId,
+            },
+          },
+        );
+
+        // Old carts becomes `null` when you checkout.
+        if (!data?.cart) {
+          return null;
+        }
+
+        return normalizeCart(data.cart);
       },
-      async addItem(item) {
-        return null;
+      async addItem(cartId, item) {
+        const { data, errors, extensions } = await client.request(
+          addToCartMutation,
+          {
+            variables: {
+              cartId,
+              lines: [item],
+            },
+          },
+        );
+
+        if (!data?.cartLinesAdd?.cart) {
+          return null;
+        }
+
+        return normalizeCart(data.cartLinesAdd.cart);
       },
-      async updateItem(item) {
-        return null;
+      async updateItem(cartId, item) {
+        const { data, errors, extensions } = await client.request(
+          editCartItemsMutation,
+          {
+            variables: {
+              cartId,
+              lines: [item],
+            },
+          },
+        );
+
+        if (!data?.cartLinesUpdate?.cart) {
+          return null;
+        }
+
+        return normalizeCart(data.cartLinesUpdate.cart);
       },
-      async removeItem(item) {
-        return null;
+      async removeItem(cartId, item) {
+        const { data, errors, extensions } = await client.request(
+          removeFromCartMutation,
+          {
+            variables: {
+              cartId,
+              lineIds: [item],
+            },
+          },
+        );
+
+        if (!data?.cartLinesRemove?.cart) {
+          return null;
+        }
+
+        return normalizeCart(data.cartLinesRemove.cart);
       },
     },
     checkout: {
@@ -41,14 +115,36 @@ export default function shopifyProvider(options: ShopifyOptions): Provider {
       },
     },
     products: {
+      // TODO: support search params
       async getAll(params) {
-        return [];
-      },
-      async getAllByPath(first) {
-        return [];
+        const { data, errors, extensions } =
+          await client.request(getProductsQuery);
+
+        if (!data) {
+          return [];
+        }
+
+        const products = data.products.edges.map((edge) =>
+          normalizeProduct(edge.node),
+        );
+
+        return products;
       },
       async getOne(params) {
-        return null;
+        const { data, errors, extensions } = await client.request(
+          getProductQuery,
+          {
+            variables: {
+              handle: params.slug,
+            },
+          },
+        );
+
+        if (!data?.product) {
+          return null;
+        }
+
+        return normalizeProduct(data.product);
       },
     },
   };
