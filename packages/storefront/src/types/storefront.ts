@@ -1,8 +1,11 @@
 import { Cart, CartLineItem } from "./cart.js";
 import { Checkout } from "./checkout.js";
+import { Collection } from "./collection.js";
 import { AddressFields, CardFields } from "./customer.js";
+import { Page } from "./page.js";
 import { Product } from "./product.js";
 import type { CartItemBody, ProductFilter } from "./provider.js";
+import { Menu } from "./site.js";
 
 export interface CheckoutBody {
   /**
@@ -39,5 +42,17 @@ export interface Storefront {
       first?: number;
     }): Promise<Product[]>;
     getOne(params: { slug: string }): Promise<Product | null>;
+  };
+  collections: {
+    getOne(params: {
+      slug: string;
+      first?: number;
+      relevance?: ProductFilter;
+    }): Promise<{ collection: Collection; products: Product[] } | null>;
+  };
+  site: {
+    getMenu(id: string): Promise<Menu | null>;
+    getPage(id: string): Promise<Page | null>;
+    getAllPages(): Promise<Page[]>;
   };
 }

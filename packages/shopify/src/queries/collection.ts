@@ -1,26 +1,29 @@
 import productFragment from "../fragments/product.js";
-import seoFragment from "../fragments/seo.js";
 
 const collectionFragment = `#graphql
   fragment collection on Collection {
     handle
     title
     description
-    seo {
-      ...seo
-    }
     updatedAt
   }
-  ${seoFragment}
 `;
 
 export const getCollectionQuery = `#graphql
-  query getCollection($handle: String!) {
+  query getCollection($handle: String!, $sortKey: ProductCollectionSortKeys, $reverse: Boolean) {
     collection(handle: $handle) {
       ...collection
+      products(sortKey: $sortKey, reverse: $reverse, first: 100) {
+        edges {
+          node {
+            ...product
+          }
+        }
+      }
     }
   }
   ${collectionFragment}
+  ${productFragment}
 `;
 
 export const getCollectionsQuery = `#graphql

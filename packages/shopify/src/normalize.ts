@@ -1,15 +1,27 @@
-import type { Product, Cart, CartLineItem } from "@withstorefront/storefront";
+import type {
+  Product,
+  Cart,
+  CartLineItem,
+  Menu,
+  Page,
+  Collection,
+} from "@withstorefront/storefront";
 import type {
   ProductVariantConnection,
   ImageConnection,
   MoneyV2,
   ProductOption,
   Cart as ShopifyCart,
+  Collection as ShopifyCollection,
   BaseCartLineEdge,
+  Menu as ShopifyMenu,
 } from "../types/storefront.types.js";
 
 import { colorMap } from "./colors.js";
-import { GetProductQuery } from "../types/storefront.generated.js";
+import {
+  GetPageQuery,
+  GetProductQuery,
+} from "../types/storefront.generated.js";
 
 const money = ({ amount, currencyCode }: MoneyV2) => {
   return {
@@ -159,5 +171,39 @@ function normalizeLineItem({
     discounts: [],
     options:
       merchandise.title == "Default Title" ? [] : merchandise.selectedOptions,
+  };
+}
+
+export function normalizeMenu(menu: ShopifyMenu): Menu {
+  return {
+    id: menu.handle,
+    items: menu.items.map(({ title, url }) => ({
+      name: title,
+      url: new URL(url).pathname,
+    })),
+  };
+}
+
+export function normalizePage(page: GetPageQuery["pageByHandle"]): Page {
+  return {
+    id: page.handle,
+    name: page.title,
+    body: page.body,
+  };
+}
+
+export function normalizeCollection(collection: ShopifyCollection): {
+  collection: Collection;
+  products: Product[];
+} {
+  return {
+    collection: {
+      slug: collection.handle,
+      name: collection.title,
+      description: collection.description,
+    },
+    products: collection.products.edges.map(({ node }) =>
+      normalizeProduct(node),
+    ),
   };
 }

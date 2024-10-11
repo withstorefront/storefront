@@ -3,13 +3,22 @@ import { Provider, StorefrontAdapter } from "@withstorefront/storefront";
 import pkg from "../package.json";
 import fetcher from "./fetcher.js";
 import { getProductQuery, getProductsQuery } from "./queries/products.js";
-import { normalizeCart, normalizeProduct } from "./normalize.js";
+import {
+  normalizeCart,
+  normalizeCollection,
+  normalizeMenu,
+  normalizePage,
+  normalizeProduct,
+} from "./normalize.js";
 import { getCartQuery } from "./queries/cart.js";
 import {
   addToCartMutation,
   editCartItemsMutation,
   removeFromCartMutation,
 } from "./mutations/cart.js";
+import { getMenuQuery } from "./queries/site.js";
+import { getPageQuery, getPagesQuery } from "./queries/page.js";
+import { getCollectionQuery } from "./queries/collection.js";
 
 export interface ShopifyOptions {
   domain: string;
@@ -145,6 +154,68 @@ export default function shopifyProvider(options: ShopifyOptions): Provider {
         }
 
         return normalizeProduct(data.product);
+      },
+    },
+    collections: {
+      async getOne(params) {
+        const { data, errors, extensions } = await client.request(
+          getCollectionQuery,
+          {
+            variables: {
+              handle: params.slug,
+            },
+          },
+        );
+
+        if (!data?.collection) {
+          return null;
+        }
+
+        return normalizeCollection(data.collection);
+      },
+    },
+    site: {
+      async getMenu(id: string) {
+        const { data, errors, extensions } = await client.request(
+          getMenuQuery,
+          {
+            variables: {
+              handle: id,
+            },
+          },
+        );
+
+        if (!data?.menu) {
+          return null;
+        }
+
+        return normalizeMenu(data.menu);
+      },
+      async getPage(id: string) {
+        const { data, errors, extensions } = await client.request(
+          getPageQuery,
+          {
+            variables: {
+              handle: id,
+            },
+          },
+        );
+
+        if (!data?.pageByHandle) {
+          return null;
+        }
+
+        return normalizePage(data.pageByHandle);
+      },
+      async getAllPages() {
+        const { data, errors, extensions } =
+          await client.request(getPagesQuery);
+
+        if (!data?.pages.edges) {
+          return [];
+        }
+
+        return data.pages.edges.map(({ node }) => normalizePage(node));
       },
     },
   };

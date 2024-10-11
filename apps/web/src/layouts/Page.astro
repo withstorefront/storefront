@@ -1,0 +1,45 @@
+---
+import { storefront } from "../storefront";
+
+const mainMenu = await storefront.site.getMenu("main-menu");
+const footerMenu = await storefront.site.getMenu("footer");
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>Storefront</title>
+  </head>
+  <body>
+    <header>
+      <a href="/">Storefront</a>
+      {
+        mainMenu && (
+          <nav>
+            {mainMenu.items.map((item) => (
+              <a href={item.url}>{item.name}</a>
+            ))}
+          </nav>
+        )
+      }
+    </header>
+    <main>
+      <slot />
+    </main>
+    <footer>
+      <small>&copy; 2024 All Rights Reserved</small>
+      {
+        footerMenu && (
+          <nav aria-label="Footer navigation">
+            {footerMenu.items.map((item) => (
+              <a href={item.url}>{item.name}</a>
+            ))}
+          </nav>
+        )
+      }
+    </footer>
+  </body>
+</html>

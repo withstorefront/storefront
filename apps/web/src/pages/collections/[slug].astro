@@ -1,0 +1,29 @@
+---
+import Layout from "../../layouts/Page.astro";
+import { storefront } from "../../storefront";
+
+const { slug } = Astro.params as { slug: string };
+
+const collection = await storefront.collections.getOne({ slug });
+
+if (!collection) {
+  throw new Error();
+}
+---
+
+<Layout>
+  <h1>{collection.collection.name}</h1>
+  <ul>
+    {
+      collection.products.map((product) => (
+        <li>
+          <article>
+            <h3>
+              <a href={`/products/${product.slug}`}>{product.name}</a>
+            </h3>
+          </article>
+        </li>
+      ))
+    }
+  </ul>
+</Layout>

@@ -1,0 +1,17 @@
+---
+import Layout from "../../layouts/Page.astro";
+import { storefront } from "../../storefront";
+
+const { slug } = Astro.params as { slug: string };
+
+const page = await storefront.site.getPage(slug);
+
+if (!page) {
+  throw new Error();
+}
+---
+
+<Layout>
+  <h1>{page.name}</h1>
+  <Fragment set:html={page.body} />
+</Layout>

@@ -1,6 +1,9 @@
 import { Cart, CartLineItem, SelectedOption } from "./cart.js";
 import { Checkout } from "./checkout.js";
+import { Collection } from "./collection.js";
+import { Page } from "./page.js";
 import { Product } from "./product.js";
+import { Menu } from "./site.js";
 
 /**
  * Base cart item body used for cart mutations
@@ -45,5 +48,17 @@ export interface Provider {
       first?: number;
     }): Promise<Product[]>;
     getOne(params: { slug: string }): Promise<Product | null>;
+  };
+  collections: {
+    getOne(params: {
+      slug: string;
+      first?: number;
+      relevance?: ProductFilter;
+    }): Promise<{ collection: Collection; products: Product[] } | null>;
+  };
+  site: {
+    getMenu(id: string): Promise<Menu | null>;
+    getPage(id: string): Promise<Page | null>;
+    getAllPages(): Promise<Page[]>;
   };
 }
