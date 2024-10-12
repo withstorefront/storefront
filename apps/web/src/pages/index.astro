@@ -6,7 +6,7 @@ const products = await storefront.products.getAll({});
 ---
 
 <Layout>
-  <h1>Storefront</h1>
+  <h1>Featured products</h1>
   <ul>
     {
       products.map((product) => (
@@ -15,6 +15,16 @@ const products = await storefront.products.getAll({});
             <h3>
               <a href={`/products/${product.slug}`}>{product.name}</a>
             </h3>
+            <form method="post" action="/api/cart">
+              <input type="hidden" name="productId" value={product.id} />
+              <input
+                type="hidden"
+                name="variantId"
+                value={product.variants[0]!.id}
+              />
+              <input type="hidden" name="quantity" value="1" />
+              <button type="submit">Add to cart</button>
+            </form>
           </article>
         </li>
       ))

@@ -1,0 +1,18 @@
+---
+import { storefront } from "../storefront";
+
+const footerMenu = await storefront.site.getMenu("footer");
+---
+
+<footer>
+  <small>&copy; 2024 All Rights Reserved</small>
+  {
+    footerMenu && (
+      <nav aria-label="Footer navigation">
+        {footerMenu.items.map((item) => (
+          <a href={item.url}>{item.name}</a>
+        ))}
+      </nav>
+    )
+  }
+</footer>

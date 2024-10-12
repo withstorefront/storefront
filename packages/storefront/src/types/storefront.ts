@@ -1,10 +1,14 @@
-import { Cart, CartLineItem } from "./cart.js";
+import { Cart } from "./cart.js";
 import { Checkout } from "./checkout.js";
 import { Collection } from "./collection.js";
 import { AddressFields, CardFields } from "./customer.js";
 import { Page } from "./page.js";
 import { Product } from "./product.js";
-import type { CartItemBody, ProductFilter } from "./provider.js";
+import type {
+  CartItemBody,
+  CartLineItemBody,
+  ProductFilter,
+} from "./provider.js";
 import { Menu } from "./site.js";
 
 export interface CheckoutBody {
@@ -27,9 +31,9 @@ export interface CheckoutBody {
 export interface Storefront {
   cart: {
     get(cartId: string): Cart | null;
-    addItem(cartId: string, body: CartItemBody): Cart | null;
-    updateItem(cartId: string, lineItem: CartLineItem): Cart | null;
-    removeItem(cartId: string, lineItem: CartLineItem): Cart | null;
+    addItem(cartId: string | null | undefined, body: CartItemBody): Cart | null;
+    updateItem(cartId: string, lineItem: CartLineItemBody): Cart | null;
+    removeItem(cartId: string, lineId: string): Cart | null;
   };
   checkout: {
     get(cartId: string): Checkout | null;

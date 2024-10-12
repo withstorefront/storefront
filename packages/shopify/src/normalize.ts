@@ -128,9 +128,17 @@ export function normalizeProduct({
   };
 }
 
+function guidToId(guid: string) {
+  return guid.slice(guid.lastIndexOf("/") + 1);
+}
+
+export function idToGuid(type: string, id: string) {
+  return `gid://shopify/${type}/${id}`;
+}
+
 export function normalizeCart(cart: ShopifyCart): Cart {
   return {
-    id: cart.id,
+    id: guidToId(cart.id),
     url: cart.checkoutUrl,
     customerId: "",
     email: "",
@@ -143,12 +151,13 @@ export function normalizeCart(cart: ShopifyCart): Cart {
     lineItemsSubtotalPrice: +cart.cost.subtotalAmount.amount,
     subtotalPrice: +cart.cost.subtotalAmount.amount,
     totalPrice: cart.cost.totalAmount.amount,
+    totalQuantity: cart.totalQuantity,
     discounts: [],
   };
 }
 
 function normalizeLineItem({
-  node: { id, merchandise, quantity },
+  node: { id, cost, merchandise, quantity },
 }: BaseCartLineEdge): CartLineItem {
   return {
     id,
@@ -164,7 +173,7 @@ function normalizeLineItem({
         url: merchandise.image?.url || "/product-img-placeholder.svg",
       },
       requiresShipping: merchandise.requiresShipping ?? false,
-      price: merchandise.price.amount,
+      price: cost.totalAmount.amount,
       options: merchandise.selectedOptions,
     },
     path: String(merchandise.product.handle),

@@ -8,34 +8,63 @@ import { Menu } from "./site.js";
 /**
  * Base cart item body used for cart mutations
  */
-export interface CartItemBody {
-  /**
-   *  The unique identifier for the product variant.
-   */
-  variantId: string;
-  /**
-   *  The unique identifier for the product, if the variant is not provided.
-   */
-  productId?: string;
-  /**
-   * The quantity of the product variant.
-   */
-  quantity?: number;
+export type CartItemBody =
+  | {
+      /**
+       *  The unique identifier for the product variant.
+       */
+      variantId: never;
+      /**
+       *  The unique identifier for the product, if the variant is not provided.
+       */
+      productId: string;
+      /**
+       * The quantity of the product variant.
+       */
+      quantity?: number;
 
-  /**
-   * The product variant's selected options.
-   */
-  optionsSelected?: SelectedOption[];
-}
+      /**
+       * The product variant's selected options.
+       */
+      optionsSelected?: SelectedOption[];
+    }
+  | {
+      /**
+       *  The unique identifier for the product variant.
+       */
+      variantId: string;
+      /**
+       *  The unique identifier for the product, if the variant is not provided.
+       */
+      productId: string;
+      /**
+       * The quantity of the product variant.
+       */
+      quantity?: number;
+
+      /**
+       * The product variant's selected options.
+       */
+      optionsSelected?: SelectedOption[];
+    };
+
+export type CartLineItemBody = Partial<CartLineItem> &
+  Required<Pick<CartLineItem, "id">>;
 
 export type ProductFilter = "featured" | "best_selling" | "newest";
 
 export interface Provider {
   cart: {
     get: (cartId: string) => Promise<Cart | null>;
-    addItem: (cartId: string, item: CartItemBody) => Promise<Cart | null>;
-    updateItem: (cartId: string, item: CartLineItem) => Promise<Cart | null>;
-    removeItem: (cartId: string, item: CartLineItem) => Promise<Cart | null>;
+    addItem: (
+      cartId: string | null | undefined,
+      item: CartItemBody,
+    ) => Promise<Cart | null>;
+    updateItem: (
+      cartId: string,
+      item: CartLineItemBody,
+    ) => Promise<Cart | null>;
+    removeItem: (cartId: string, lineId: string) => Promise<Cart | null>;
   };
   checkout: {
     get: (cartId: string) => Promise<Checkout | null>;

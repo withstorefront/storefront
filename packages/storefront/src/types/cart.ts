@@ -104,6 +104,10 @@ export interface Cart {
    */
   totalPrice: number;
   /**
+   * The sum of all the quantities of all the items in the cart.
+   */
+  totalQuantity: number;
+  /**
    * Discounts that have been applied on the cart.
    */
   discounts?: Discount[];

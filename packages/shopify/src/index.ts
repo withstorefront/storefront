@@ -1,9 +1,9 @@
 import { createStorefrontApiClient } from "@shopify/storefront-api-client";
 import { Provider, StorefrontAdapter } from "@withstorefront/storefront";
 import pkg from "../package.json";
-import fetcher from "./fetcher.js";
 import { getProductQuery, getProductsQuery } from "./queries/products.js";
 import {
+  idToGuid,
   normalizeCart,
   normalizeCollection,
   normalizeMenu,
@@ -13,6 +13,7 @@ import {
 import { getCartQuery } from "./queries/cart.js";
 import {
   addToCartMutation,
+  createCartMutation,
   editCartItemsMutation,
   removeFromCartMutation,
 } from "./mutations/cart.js";
@@ -34,10 +35,12 @@ export function shopify(
   };
 }
 
+function cartIdToGuid(cartId: string) {
+  return idToGuid("Cart", cartId);
+}
+
 /* eslint-disable @typescript-eslint/no-unused-vars */
 export default function shopifyProvider(options: ShopifyOptions): Provider {
-  const shopifyFetch = fetcher(options);
-
   const client = createStorefrontApiClient({
     storeDomain: options.domain,
     apiVersion: "2024-10",
@@ -51,7 +54,7 @@ export default function shopifyProvider(options: ShopifyOptions): Provider {
           getCartQuery,
           {
             variables: {
-              cartId,
+              cartId: cartIdToGuid(cartId),
             },
           },
         );
@@ -64,17 +67,45 @@ export default function shopifyProvider(options: ShopifyOptions): Provider {
         return normalizeCart(data.cart);
       },
       async addItem(cartId, item) {
+        if (!cartId) {
+          const { data, errors, extensions } = await client.request(
+            createCartMutation,
+            {
+              variables: {
+                lineItems: [
+                  {
+                    quantity: item.quantity || 1,
+                    merchandiseId: item.variantId || item.productId,
+                  },
+                ],
+              },
+            },
+          );
+
+          if (!data?.cartCreate?.cart) {
+            return null;
+          }
+
+          return normalizeCart(data.cartCreate.cart);
+        }
+
         const { data, errors, extensions } = await client.request(
           addToCartMutation,
           {
             variables: {
-              cartId,
-              lines: [item],
+              cartId: cartIdToGuid(cartId),
+              lineItems: [
+                {
+                  quantity: item.quantity || 1,
+                  merchandiseId: item.variantId || item.productId,
+                },
+              ],
             },
           },
         );
 
         if (!data?.cartLinesAdd?.cart) {
+          console.error(errors);
           return null;
         }
 
@@ -85,8 +116,8 @@ export default function shopifyProvider(options: ShopifyOptions): Provider {
           editCartItemsMutation,
           {
             variables: {
-              cartId,
-              lines: [item],
+              cartId: cartIdToGuid(cartId),
+              lineItems: [item],
             },
           },
         );
@@ -97,13 +128,13 @@ export default function shopifyProvider(options: ShopifyOptions): Provider {
 
         return normalizeCart(data.cartLinesUpdate.cart);
       },
-      async removeItem(cartId, item) {
+      async removeItem(cartId, lineId) {
         const { data, errors, extensions } = await client.request(
           removeFromCartMutation,
           {
             variables: {
-              cartId,
-              lineIds: [item],
+              cartId: cartIdToGuid(cartId),
+              lineIds: [lineId],
             },
           },
         );
