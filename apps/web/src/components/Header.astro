@@ -16,10 +16,10 @@ const mainMenu = await storefront.site.getMenu("main-menu");
       </nav>
     )
   }
-  <button>
+  <a href="/cart">
     <Bag height="1rem" width="1rem" />
     <small>{Astro.locals.cart?.totalQuantity ?? 0}</small>
-  </button>
+  </a>
 </header>
 
 <style>
@@ -40,7 +40,7 @@ const mainMenu = await storefront.site.getMenu("main-menu");
     gap: 1rem;
   }
 
-  button {
+  a[href="/cart"] {
     display: flex;
     gap: 0.25rem;
     align-items: center;

@@ -156,14 +156,13 @@ export function normalizeCart(cart: ShopifyCart): Cart {
   };
 }
 
-function normalizeLineItem({
-  node: { id, cost, merchandise, quantity },
-}: BaseCartLineEdge): CartLineItem {
+function normalizeLineItem({ node }: BaseCartLineEdge): CartLineItem {
+  const { id, cost, merchandise, quantity } = node;
   return {
     id,
-    variantId: String(merchandise.id),
-    productId: String(merchandise.id),
-    name: `${merchandise.title}`,
+    variantId: String(merchandise.product.id),
+    productId: String(merchandise.product.id),
+    name: `${merchandise.product.title}`,
     quantity,
     variant: {
       id: String(merchandise.id),
@@ -176,8 +175,8 @@ function normalizeLineItem({
       price: cost.totalAmount.amount,
       options: merchandise.selectedOptions,
     },
-    path: String(merchandise.product.handle),
     discounts: [],
+    subtotalPrice: cost.totalAmount.amount,
     options:
       merchandise.title == "Default Title" ? [] : merchandise.selectedOptions,
   };

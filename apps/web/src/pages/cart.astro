@@ -1,0 +1,20 @@
+---
+import CartComponent from "../components/Cart.astro";
+import Layout from "../layouts/Page.astro";
+---
+
+<Layout>
+  {
+    Astro.locals.cart?.totalQuantity && (
+      <CartComponent cart={Astro.locals.cart} />
+    )
+  }
+  {
+    !Astro.locals.cart?.totalQuantity && (
+      <section>
+        <h1>Your cart is empty</h1>
+        <a href="/">Continue shopping</a>
+      </section>
+    )
+  }
+</Layout>

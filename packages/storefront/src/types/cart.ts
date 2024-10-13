@@ -42,9 +42,9 @@ export interface CartLineItem {
    */
   discounts: Discount[];
   /**
-   * A human-friendly unique string automatically generated from the product’s name.
+   * Price of the line item before duties, shipping and taxes
    */
-  path: string;
+  subtotalPrice: number;
   /**
    * The product variant.
    */

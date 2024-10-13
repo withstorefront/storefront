@@ -1,0 +1,80 @@
+---
+import type { Cart } from "@withstorefront/storefront";
+import Trash from "phosphor-astro/Trash.astro";
+
+export interface Props {
+  cart: Cart;
+}
+
+const { cart } = Astro.props;
+
+function formatPrice(price: number) {
+  const formatter = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    trailingZeroDisplay: "stripIfInteger",
+  });
+
+  return formatter.format(price);
+}
+---
+
+<h1>Your cart</h1>
+<table>
+  <thead>
+    <tr>
+      <th>Product</th>
+      <th>Quantity</th>
+      <th>Total</th>
+    </tr>
+  </thead>
+  <tbody>
+    {
+      cart.lineItems.map((lineItem) => (
+        <tr>
+          <td>
+            <p>{lineItem.name}</p>
+            <small>{lineItem.variant.name}</small>
+          </td>
+          <td>
+            <p>{lineItem.quantity}</p>
+            <button data-lineid={lineItem.id}>
+              <Trash height="1em" />
+            </button>
+          </td>
+          <td>{formatPrice(lineItem.subtotalPrice)}</td>
+        </tr>
+      ))
+    }
+  </tbody>
+</table>
+<footer>
+  <div>
+    <h2>Estimated total</h2>
+    <p>{formatPrice(cart.subtotalPrice)}</p>
+  </div>
+  <small>Taxes, discounts, and shipping calculated at checkout.</small>
+  <a href={cart.url}>Check out</a>
+</footer>
+
+<script>
+  // TEMP: move this to client-side logic or pull in HTMX
+  const btns = document.querySelectorAll<HTMLButtonElement>(
+    "button[data-lineid]",
+  );
+
+  btns.forEach((btn) => {
+    btn.onclick = (event: MouseEvent) => {
+      event.stopPropagation();
+      event.preventDefault();
+
+      const formData = new FormData();
+      formData.append("lineId", btn.dataset.lineid ?? "");
+
+      fetch("/api/cart", {
+        method: "DELETE",
+        body: formData,
+      });
+    };
+  });
+</script>

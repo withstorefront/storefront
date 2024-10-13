@@ -75,6 +75,7 @@ export const POST: APIRoute = async (context) => {
     maxAge: 60 * 60 * 24 * 30,
   });
 
+  // TEMP: move this to client-side logic or pull in HTMX
   return sendJSON(cart, {
     status: StatusTemporaryRedirect,
     headers: {
@@ -116,6 +117,7 @@ export const PUT: APIRoute = async (context) => {
     );
   }
 
+  // TEMP: move this to client-side logic or pull in HTMX
   return sendJSON(cart, {
     status: StatusTemporaryRedirect,
     headers: {
@@ -153,10 +155,9 @@ export const DELETE: APIRoute = async (context) => {
     );
   }
 
-  return sendJSON(cart, {
-    status: StatusTemporaryRedirect,
-    headers: {
-      Location: new URL(context.request.headers.get("Referer")!).pathname,
-    },
-  });
+  // TEMP: move this to client-side logic or pull in HTMX
+  return context.redirect(
+    new URL(context.request.headers.get("Referer")!).pathname,
+    StatusTemporaryRedirect,
+  );
 };
