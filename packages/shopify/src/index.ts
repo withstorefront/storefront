@@ -20,6 +20,7 @@ import {
 import { getMenuQuery } from "./queries/site.js";
 import { getPageQuery, getPagesQuery } from "./queries/page.js";
 import { getCollectionQuery } from "./queries/collection.js";
+import { Facet } from "@withstorefront/storefront/dist/types/search.js";
 
 export interface ShopifyOptions {
   domain: string;
@@ -161,14 +162,16 @@ export default function shopifyProvider(options: ShopifyOptions): Provider {
           await client.request(getProductsQuery);
 
         if (!data) {
-          return [];
+          return { products: [], facets: [] };
         }
 
         const products = data.products.edges.map((edge) =>
           normalizeProduct(edge.node),
         );
 
-        return products;
+        const facets: Facet[] = [];
+
+        return { products, facets };
       },
       async getOne(params) {
         const { data, errors, extensions } = await client.request(

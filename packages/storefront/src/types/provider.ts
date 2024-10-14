@@ -3,6 +3,7 @@ import { Checkout } from "./checkout.js";
 import { Collection } from "./collection.js";
 import { Page } from "./page.js";
 import { Product } from "./product.js";
+import { Facet } from "./search.js";
 import { Menu } from "./site.js";
 
 /**
@@ -75,7 +76,7 @@ export interface Provider {
       relevance?: ProductFilter;
       ids?: string[];
       first?: number;
-    }): Promise<Product[]>;
+    }): Promise<{ products: Product[]; facets: Facet[] }>;
     getOne(params: { slug: string }): Promise<Product | null>;
   };
   collections: {
@@ -83,7 +84,11 @@ export interface Provider {
       slug: string;
       first?: number;
       relevance?: ProductFilter;
-    }): Promise<{ collection: Collection; products: Product[] } | null>;
+    }): Promise<{
+      collection: Collection;
+      products: Product[];
+      facets: Facet[];
+    } | null>;
   };
   site: {
     getMenu(id: string): Promise<Menu | null>;

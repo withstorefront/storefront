@@ -17,6 +17,7 @@ import type {
   Collection as ShopifyCollection,
   BaseCartLineEdge,
   Menu as ShopifyMenu,
+  Filter,
 } from "../types/storefront.types.js";
 
 import { colorMap } from "./colors.js";
@@ -24,6 +25,11 @@ import {
   GetPageQuery,
   GetProductQuery,
 } from "../types/storefront.generated.js";
+import {
+  Facet,
+  MultiSelectFacet,
+  PriceFacet,
+} from "@withstorefront/storefront/dist/types/search.js";
 
 const money = ({ amount, currencyCode }: MoneyV2) => {
   return {
@@ -216,6 +222,7 @@ export function normalizePage(page: GetPageQuery["pageByHandle"]): Page {
 export function normalizeCollection(collection: ShopifyCollection): {
   collection: Collection;
   products: Product[];
+  facets: Facet[];
 } {
   return {
     collection: {
@@ -226,5 +233,42 @@ export function normalizeCollection(collection: ShopifyCollection): {
     products: collection.products.edges.map(({ node }) =>
       normalizeProduct(node),
     ),
+    facets: collection.products.filters.map((filter) => normalizeFacet(filter)),
   };
+}
+
+export function normalizeFacet(facet: Filter): Facet {
+  switch (facet.type) {
+    case "LIST":
+      return {
+        id: facet.id,
+        name: facet.label,
+        type: "multiselect",
+        values: facet.values.map((value) => ({
+          id: value.id,
+          name: value.label,
+          productCount: value.count,
+          value: value.input,
+        })),
+      } satisfies MultiSelectFacet;
+
+    case "PRICE_RANGE": {
+      try {
+        const parsed = JSON.parse(facet.values[0].input);
+        return {
+          id: facet.id,
+          name: facet.label,
+          type: "price",
+          value: {
+            min: parsed.price.min,
+            max: parsed.price.max,
+          },
+        } satisfies PriceFacet;
+      } catch {
+        console.error(`[shopify] filter type "${facet.type}" not recognized`);
+      }
+    }
+  }
+
+  throw new Error();
 }

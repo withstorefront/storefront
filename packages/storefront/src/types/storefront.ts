@@ -9,6 +9,7 @@ import type {
   CartLineItemBody,
   ProductFilter,
 } from "./provider.js";
+import { Facet } from "./search.js";
 import { Menu } from "./site.js";
 
 export interface CheckoutBody {
@@ -44,7 +45,7 @@ export interface Storefront {
       relevance?: ProductFilter;
       ids?: string[];
       first?: number;
-    }): Promise<Product[]>;
+    }): Promise<{ products: Product[]; facets: Facet[] }>;
     getOne(params: { slug: string }): Promise<Product | null>;
   };
   collections: {
@@ -52,7 +53,11 @@ export interface Storefront {
       slug: string;
       first?: number;
       relevance?: ProductFilter;
-    }): Promise<{ collection: Collection; products: Product[] } | null>;
+    }): Promise<{
+      collection: Collection;
+      products: Product[];
+      facets: Facet[];
+    } | null>;
   };
   site: {
     getMenu(id: string): Promise<Menu | null>;
