@@ -1,0 +1,29 @@
+---
+import type { HTMLAttributes, HTMLTag } from "astro/types";
+
+export type Props<T extends HTMLTag = "p"> = HTMLAttributes<T> & {
+  as?: T;
+  value: number;
+  currencyCode?: string;
+};
+
+const {
+  as: Component = "p",
+  value,
+  currencyCode = "USD",
+  ...attrs
+} = Astro.props;
+
+function formatPrice(price: number) {
+  const formatter = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: currencyCode,
+  });
+
+  return formatter.format(price);
+}
+---
+
+<Component {...attrs}>
+  {formatPrice(value)}
+</Component>

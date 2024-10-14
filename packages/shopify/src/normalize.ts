@@ -5,10 +5,12 @@ import type {
   Menu,
   Page,
   Collection,
+  Image,
 } from "@withstorefront/storefront";
 import type {
   ProductVariantConnection,
   ImageConnection,
+  Image as ShopifyImage,
   MoneyV2,
   ProductOption,
   Cart as ShopifyCart,
@@ -59,13 +61,22 @@ const normalizeProductOption = ({
   };
 };
 
-const normalizeProductImages = ({ edges }: ImageConnection) =>
-  edges?.map(({ node: { url, altText: alt, width, height } }) => ({
+const normalizeProductImage = ({
+  url,
+  altText: alt,
+  width,
+  height,
+}: ShopifyImage): Image => {
+  return {
     url,
     alt: alt as string | undefined,
     width: width as number | undefined,
     height: height as number | undefined,
-  }));
+  };
+};
+
+const normalizeProductImages = ({ edges }: ImageConnection) =>
+  edges?.map(({ node }) => normalizeProductImage(node));
 
 const normalizeProductVariants = ({ edges }: ProductVariantConnection) => {
   return edges?.map(
@@ -100,13 +111,13 @@ export function normalizeProduct({
   title: name,
   vendor,
   images,
+  featuredImage,
   variants,
   description,
   descriptionHtml,
   handle,
   priceRange,
   options,
-  ...rest
 }: GetProductQuery["product"]): Product {
   return {
     id,
@@ -116,6 +127,7 @@ export function normalizeProduct({
     slug: handle?.replace(/^\/+|\/+$/g, ""),
     price: money(priceRange?.minVariantPrice),
     images: normalizeProductImages(images),
+    featuredImage: featuredImage && normalizeProductImage(featuredImage),
     variants: variants ? normalizeProductVariants(variants) : [],
     options: options
       ? options
@@ -124,7 +136,6 @@ export function normalizeProduct({
       : [],
     description: description || "",
     ...(descriptionHtml && { descriptionHtml }),
-    ...rest,
   };
 }
 
@@ -158,19 +169,21 @@ export function normalizeCart(cart: ShopifyCart): Cart {
 
 function normalizeLineItem({ node }: BaseCartLineEdge): CartLineItem {
   const { id, cost, merchandise, quantity } = node;
+  const image = merchandise.image || merchandise.product.featuredImage;
   return {
     id,
     variantId: String(merchandise.product.id),
     productId: String(merchandise.product.id),
     name: `${merchandise.product.title}`,
     quantity,
+    image: image ? normalizeProductImage(image) : undefined,
     variant: {
       id: String(merchandise.id),
       sku: merchandise.sku ?? "",
-      name: merchandise.title!,
-      image: {
-        url: merchandise.image?.url || "/product-img-placeholder.svg",
-      },
+      name: merchandise.title == "Default Title" ? "" : merchandise.title,
+      image: merchandise.image
+        ? normalizeProductImage(merchandise.image)
+        : undefined,
       requiresShipping: merchandise.requiresShipping ?? false,
       price: cost.totalAmount.amount,
       options: merchandise.selectedOptions,

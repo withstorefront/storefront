@@ -1,4 +1,5 @@
 ---
+import ProductCardList from "../../components/ProductCardList.astro";
 import Layout from "../../layouts/Page.astro";
 import { storefront } from "../../storefront";
 
@@ -12,18 +13,8 @@ if (!collection) {
 ---
 
 <Layout>
-  <h1>{collection.collection.name}</h1>
-  <ul>
-    {
-      collection.products.map((product) => (
-        <li>
-          <article>
-            <h3>
-              <a href={`/products/${product.slug}`}>{product.name}</a>
-            </h3>
-          </article>
-        </li>
-      ))
-    }
-  </ul>
+  <ProductCardList
+    name={collection.collection.name}
+    products={collection.products}
+  />
 </Layout>

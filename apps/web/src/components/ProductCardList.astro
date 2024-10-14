@@ -1,0 +1,39 @@
+---
+import type { Product } from "@withstorefront/storefront";
+import ProductCard from "./ProductCard.astro";
+
+export interface Props {
+  products: Product[];
+  name: string;
+}
+
+const { products, name } = Astro.props;
+
+function sortProducts(a: Product, b: Product) {
+  return a.name.localeCompare(b.name);
+}
+---
+
+<h1>{name}</h1>
+<ul>
+  {
+    products.sort(sortProducts).map((product) => (
+      <li>
+        <ProductCard {product} />
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  ul {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1rem;
+
+    margin: 0;
+    padding: 0;
+
+    list-style: none;
+  }
+</style>

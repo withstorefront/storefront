@@ -1,0 +1,41 @@
+---
+import type { Product } from "@withstorefront/storefront";
+
+export interface Props {
+  product: Product;
+}
+
+const { product } = Astro.props;
+---
+
+<article>
+  {
+    product.featuredImage && (
+      <img
+        src={product.featuredImage.url}
+        alt={product.featuredImage.alt}
+        width={product.featuredImage.width}
+        height={product.featuredImage.height}
+      />
+    )
+  }
+  <h3>
+    <a href={`/products/${product.slug}`}>{product.name}</a>
+  </h3>
+  <form method="post" action="/api/cart">
+    <input type="hidden" name="productId" value={product.id} />
+    <input type="hidden" name="variantId" value={product.variants[0]!.id} />
+    <input type="hidden" name="quantity" value="1" />
+    <button type="submit">Add to cart</button>
+  </form>
+</article>
+
+<style>
+  article {
+    text-align: center;
+  }
+
+  img {
+    aspect-ratio: 1;
+  }
+</style>

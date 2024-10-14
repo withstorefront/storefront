@@ -138,6 +138,10 @@ export interface Product {
    */
   images: Image[];
   /**
+   * The featured image associated with the product.
+   */
+  featuredImage?: Image;
+  /**
    * List of the product’s variants.
    */
   variants: ProductVariant[];

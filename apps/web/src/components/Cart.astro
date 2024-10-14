@@ -1,29 +1,21 @@
 ---
 import type { Cart } from "@withstorefront/storefront";
 import Trash from "phosphor-astro/Trash.astro";
+import Price from "./Price.astro";
+import Image from "./Image.astro";
 
 export interface Props {
   cart: Cart;
 }
 
 const { cart } = Astro.props;
-
-function formatPrice(price: number) {
-  const formatter = new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    trailingZeroDisplay: "stripIfInteger",
-  });
-
-  return formatter.format(price);
-}
 ---
 
 <h1>Your cart</h1>
 <table>
   <thead>
     <tr>
-      <th>Product</th>
+      <th colspan="2">Product</th>
       <th>Quantity</th>
       <th>Total</th>
     </tr>
@@ -32,17 +24,26 @@ function formatPrice(price: number) {
     {
       cart.lineItems.map((lineItem) => (
         <tr>
+          <td>{lineItem.image && <Image {...lineItem.image} />}</td>
           <td>
             <p>{lineItem.name}</p>
+            <Price as="small" value={lineItem.subtotalPrice} />
             <small>{lineItem.variant.name}</small>
           </td>
           <td>
-            <p>{lineItem.quantity}</p>
+            <input
+              name="quantity"
+              type="number"
+              min="1"
+              step="1"
+              value={lineItem.quantity}
+              data-lineid={lineItem.id}
+            />
             <button data-lineid={lineItem.id}>
-              <Trash height="1em" />
+              <Trash height={20} width={20} />
             </button>
           </td>
-          <td>{formatPrice(lineItem.subtotalPrice)}</td>
+          <Price as="td" value={lineItem.subtotalPrice} />
         </tr>
       ))
     }
@@ -51,7 +52,7 @@ function formatPrice(price: number) {
 <footer>
   <div>
     <h2>Estimated total</h2>
-    <p>{formatPrice(cart.subtotalPrice)}</p>
+    <Price value={cart.subtotalPrice} />
   </div>
   <small>Taxes, discounts, and shipping calculated at checkout.</small>
   <a href={cart.url}>Check out</a>
@@ -64,17 +65,56 @@ function formatPrice(price: number) {
   );
 
   btns.forEach((btn) => {
-    btn.onclick = (event: MouseEvent) => {
+    btn.onclick = async (event: MouseEvent) => {
       event.stopPropagation();
       event.preventDefault();
 
       const formData = new FormData();
       formData.append("lineId", btn.dataset.lineid ?? "");
 
-      fetch("/api/cart", {
+      await fetch("/api/cart", {
         method: "DELETE",
         body: formData,
       });
+
+      location.reload();
+    };
+  });
+
+  // TEMP: move this to client-side logic or pull in HTMX
+  const quantities = document.querySelectorAll<HTMLInputElement>(
+    "input[name='quantity']",
+  );
+
+  quantities.forEach((input) => {
+    input.onchange = async (event) => {
+      event.stopPropagation();
+      event.preventDefault();
+
+      const formData = new FormData();
+      formData.append("lineId", input.dataset.lineid ?? "");
+      formData.append("quantity", input.value);
+
+      await fetch("/api/cart", {
+        method: "PUT",
+        body: formData,
+      });
+
+      location.reload();
     };
   });
 </script>
+
+<style>
+  th {
+    text-align: start;
+  }
+
+  :is(td, th):last-child {
+    text-align: end;
+  }
+
+  td img {
+    width: 7.5rem;
+  }
+</style>

@@ -1,4 +1,4 @@
-import type { Discount } from "./common.js";
+import type { Discount, Image } from "./common.js";
 import type { ProductVariant } from "./product.js";
 
 export interface SelectedOption {
@@ -37,6 +37,10 @@ export interface CartLineItem {
    * The quantity of the product variant in the line item.
    */
   quantity: number;
+  /**
+   * The image associated with the variant.
+   */
+  image?: Image;
   /**
    * List of discounts applied to the line item.
    */

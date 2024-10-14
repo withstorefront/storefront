@@ -1,33 +1,19 @@
 ---
+import ProductCardList from "../components/ProductCardList.astro";
 import Layout from "../layouts/Page.astro";
 import { storefront } from "../storefront";
 
-const products = await storefront.products.getAll({});
+const collection = await storefront.collections.getOne({
+  slug: "automated-collection",
+});
+
+if (!collection) {
+  throw new Error();
+}
+
+const { products } = collection;
 ---
 
 <Layout>
-  <h1>Featured products</h1>
-  <ul>
-    {
-      products.map((product) => (
-        <li>
-          <article>
-            <h3>
-              <a href={`/products/${product.slug}`}>{product.name}</a>
-            </h3>
-            <form method="post" action="/api/cart">
-              <input type="hidden" name="productId" value={product.id} />
-              <input
-                type="hidden"
-                name="variantId"
-                value={product.variants[0]!.id}
-              />
-              <input type="hidden" name="quantity" value="1" />
-              <button type="submit">Add to cart</button>
-            </form>
-          </article>
-        </li>
-      ))
-    }
-  </ul>
+  <ProductCardList name="Featured products" {products} />
 </Layout>

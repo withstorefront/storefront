@@ -1,0 +1,10 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import type { Image as StorefrontImage } from "@withstorefront/storefront";
+
+export type Props = Exclude<HTMLAttributes<"img">, "src"> & StorefrontImage;
+
+const { url, ...rest } = Astro.props;
+---
+
+<img src={url} {...rest} />
