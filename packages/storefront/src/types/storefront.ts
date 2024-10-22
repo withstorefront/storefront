@@ -3,7 +3,7 @@ import { Checkout } from "./checkout.js";
 import { Collection } from "./collection.js";
 import { AddressFields, CardFields } from "./customer.js";
 import { Page } from "./page.js";
-import { Product } from "./product.js";
+import { Product, ProductFacet } from "./product.js";
 import type {
   CartItemBody,
   CartLineItemBody,
@@ -52,7 +52,11 @@ export interface Storefront {
       slug: string;
       first?: number;
       relevance?: ProductFilter;
-    }): Promise<{ collection: Collection; products: Product[] } | null>;
+    }): Promise<{
+      collection: Collection;
+      products: Product[];
+      facets: ProductFacet[];
+    } | null>;
   };
   site: {
     getMenu(id: string): Promise<Menu | null>;

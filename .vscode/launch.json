@@ -10,11 +10,10 @@
     },
     {
       "name": "Libraries",
-      "type": "node",
+      "type": "node-terminal",
       "request": "launch",
       "cwd": "${workspaceFolder}",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["run-script", "dev"]
+      "command": "npm run dev"
     }
   ],
   "compounds": [

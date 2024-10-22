@@ -2,7 +2,7 @@ import { Cart, CartLineItem, SelectedOption } from "./cart.js";
 import { Checkout } from "./checkout.js";
 import { Collection } from "./collection.js";
 import { Page } from "./page.js";
-import { Product } from "./product.js";
+import { Product, ProductFacet } from "./product.js";
 import { Menu } from "./site.js";
 
 /**
@@ -83,7 +83,11 @@ export interface Provider {
       slug: string;
       first?: number;
       relevance?: ProductFilter;
-    }): Promise<{ collection: Collection; products: Product[] } | null>;
+    }): Promise<{
+      collection: Collection;
+      products: Product[];
+      facets: ProductFacet[];
+    } | null>;
   };
   site: {
     getMenu(id: string): Promise<Menu | null>;

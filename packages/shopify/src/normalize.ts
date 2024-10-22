@@ -1,5 +1,6 @@
 import type {
   Product,
+  ProductFacet,
   Cart,
   CartLineItem,
   Menu,
@@ -17,6 +18,7 @@ import type {
   Collection as ShopifyCollection,
   BaseCartLineEdge,
   Menu as ShopifyMenu,
+  Filter,
 } from "../types/storefront.types.js";
 
 import { colorMap } from "./colors.js";
@@ -216,6 +218,7 @@ export function normalizePage(page: GetPageQuery["pageByHandle"]): Page {
 export function normalizeCollection(collection: ShopifyCollection): {
   collection: Collection;
   products: Product[];
+  facets: ProductFacet[];
 } {
   return {
     collection: {
@@ -226,5 +229,34 @@ export function normalizeCollection(collection: ShopifyCollection): {
     products: collection.products.edges.map(({ node }) =>
       normalizeProduct(node),
     ),
+    facets: collection.products.filters.map((filter) =>
+      normalizeProductFilter(filter),
+    ),
+  };
+}
+
+export function normalizeProductFilter(filter: Filter): ProductFacet {
+  if (filter.type == "PRICE_RANGE") {
+    const parsedValue = JSON.parse(filter.values[0].input) as {
+      price: { min: number; max: number };
+    };
+    return {
+      id: filter.id,
+      label: filter.label,
+      type: "PRICE_RANGE",
+      value: parsedValue.price,
+    };
+  }
+
+  return {
+    id: filter.id,
+    label: filter.label,
+    type: "MULTI_SELECT",
+    values: filter.values.map((value) => ({
+      id: value.id,
+      label: value.label,
+      value: value.input,
+      productCount: value.count,
+    })),
   };
 }

@@ -158,3 +158,68 @@ export interface Product {
    */
   vendor?: string;
 }
+
+export type ProductFacetType = "MULTI_SELECT" | "SINGLE_SELECT" | "PRICE_RANGE";
+
+export type ProductFacet = ProductFacetPriceRange | ProductFacetList;
+
+export interface ProductFacetPriceRange {
+  /**
+   * The unique identifier for the facet.
+   */
+  id: string;
+  /**
+   * The product facet's name.
+   * @example `Color` or `Size`
+   */
+  label: string;
+  value: {
+    min?: number | undefined;
+    max?: number | undefined;
+  };
+  /**
+   * The type of control a facet has over product filtering.
+   */
+  type: "PRICE_RANGE";
+}
+
+export interface ProductFacetList {
+  /**
+   * The unique identifier for the facet.
+   */
+  id: string;
+  /**
+   * The product facet's name.
+   * @example `Color` or `Size`
+   */
+  label: string;
+  /**
+   * List of facet values.
+   * @example `["Red", "Green", "Blue"]`
+   */
+  values: ProductFacetItem[];
+  /**
+   * The type of control a facet has over product filtering.
+   */
+  type: "MULTI_SELECT" | "SINGLE_SELECT";
+}
+
+export interface ProductFacetItem {
+  /**
+   * The unique identifier for the facet item.
+   */
+  id: string;
+  /**
+   * The product facet item's name.
+   * @example `Color` or `Size`
+   */
+  label: string;
+  /**
+   * Unique value for the facet value.
+   */
+  value: string;
+  /**
+   * The number of products that match the facet value.
+   */
+  productCount?: number | undefined;
+}
