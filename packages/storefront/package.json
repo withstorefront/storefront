@@ -24,6 +24,7 @@
     "ecommerce"
   ],
   "scripts": {
+    "dev": "npm run clean && tsc --watch",
     "build": "npm run clean && tsc",
     "clean": "rimraf dist",
     "lint": "eslint . --fix",

@@ -1,0 +1,27 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "command": "../../node_modules/.bin/astro dev",
+      "name": "Astro server",
+      "cwd": "${workspaceFolder}/apps/web",
+      "request": "launch",
+      "type": "node-terminal"
+    },
+    {
+      "name": "Libraries",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run-script", "dev"]
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Development server",
+      "configurations": ["Astro server", "Libraries"],
+      "stopAll": true
+    }
+  ]
+}
