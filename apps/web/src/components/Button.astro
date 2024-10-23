@@ -1,0 +1,49 @@
+---
+import type { HTMLAttributes } from "astro/types";
+
+export interface Props extends HTMLAttributes<"button"> {
+  theme?: "alt" | "link";
+  size?: "sm" | "lg";
+  href?: string;
+}
+
+const { href, theme, size, class: className, ...attrs } = Astro.props;
+
+const Component = href ? "a" : "button";
+---
+
+<Component class:list={[className, theme, size]} {href} {...attrs}>
+  <slot />
+</Component>
+
+<style>
+  a,
+  button {
+    padding: var(--space-xs) var(--space-m);
+
+    font-size: var(--font-size-0);
+    font-weight: 700;
+    color: var(--color-neutral-100);
+    text-decoration: none;
+
+    background-color: var(--color-neutral-900);
+    border: none;
+    border-radius: 0.67em;
+  }
+
+  .sm {
+    padding: var(--space-2xs) var(--space-s);
+  }
+
+  .link {
+    padding: 0;
+    font-weight: 400;
+    text-decoration: underline;
+    background-color: transparent;
+  }
+
+  .alt {
+    color: var(--color-neutral-900);
+    background-color: var(--color-neutral-100);
+  }
+</style>

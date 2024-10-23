@@ -1,4 +1,5 @@
 ---
+import Hero from "../components/Hero.astro";
 import ProductCardList from "../components/ProductCardList.astro";
 import Layout from "../layouts/Page.astro";
 import { storefront } from "../storefront";
@@ -15,5 +16,9 @@ const { products } = collection;
 ---
 
 <Layout>
-  <ProductCardList name="Featured products" {products} />
+  <Hero
+    tagline="Ride the wave"
+    cta={{ text: "Go to catalog", href: "/collections/all" }}
+  />
+  <ProductCardList name="Popular products" {products} />
 </Layout>

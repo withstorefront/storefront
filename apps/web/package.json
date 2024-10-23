@@ -15,10 +15,12 @@
     "release": "semantic-release -e semantic-release-monorepo"
   },
   "dependencies": {
+    "@astrojs/netlify": "^5.5.4",
     "astro": "^4.0.3"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.4",
+    "@fontsource-variable/wix-madefor-display": "^5.1.0",
     "@withstorefront/astro": "^0.1.0",
     "@withstorefront/shopify": "^0.1.0",
     "eslint-config": "^1.0.0",

@@ -1,5 +1,7 @@
 ---
+import "@fontsource-variable/wix-madefor-display";
 import "../styles/global.css";
+import "../styles/theme.css";
 import Footer from "../components/Footer.astro";
 import Header from "../components/Header.astro";
 ---
@@ -14,7 +16,7 @@ import Header from "../components/Header.astro";
   </head>
   <body>
     <Header />
-    <main>
+    <main class="content">
       <slot />
     </main>
     <Footer />

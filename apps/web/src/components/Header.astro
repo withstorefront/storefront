@@ -5,29 +5,33 @@ import { storefront } from "../storefront";
 const mainMenu = await storefront.site.getMenu("main-menu");
 ---
 
-<header>
-  <a href="/">Storefront</a>
-  {
-    mainMenu && (
-      <nav>
-        {mainMenu.items.map((item) => (
-          <a href={item.url}>{item.name}</a>
-        ))}
-      </nav>
-    )
-  }
-  <a href="/cart">
-    <Bag height="1rem" width="1rem" />
-    <small>{Astro.locals.cart?.totalQuantity ?? 0}</small>
-  </a>
+<header class="content">
+  <div>
+    {
+      mainMenu && (
+        <nav>
+          {mainMenu.items.map((item) => (
+            <a href={item.url}>{item.name}</a>
+          ))}
+        </nav>
+      )
+    }
+    <a href="/">Storefront</a>
+    <a href="/cart">
+      <Bag height="1rem" width="1rem" />
+      <small>{Astro.locals.cart?.totalQuantity ?? 0}</small>
+    </a>
+  </div>
 </header>
 
 <style>
-  header {
-    display: flex;
+  header > div {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
     align-items: center;
-    justify-content: space-between;
+
     width: 100%;
+    padding-block: var(--space-xs);
   }
 
   a {
@@ -40,9 +44,14 @@ const mainMenu = await storefront.site.getMenu("main-menu");
     gap: 1rem;
   }
 
+  div > a[href="/"] {
+    font-size: var(--font-size-1);
+  }
+
   a[href="/cart"] {
     display: flex;
     gap: 0.25rem;
     align-items: center;
+    justify-self: end;
   }
 </style>

@@ -1,0 +1,35 @@
+---
+import Button from "./Button.astro";
+
+export interface Props {
+  tagline: string;
+  cta: {
+    text: string;
+    href: string;
+  };
+}
+
+const { tagline, cta } = Astro.props;
+---
+
+<section class="full-bleed">
+  <h1>{tagline}</h1>
+  <Button href={cta.href}>{cta.text}</Button>
+</section>
+
+<style>
+  section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-m);
+    align-items: center;
+
+    padding-block: var(--space-3xl-4xl);
+
+    background-color: var(--color-neutral-400);
+  }
+
+  h1 {
+    max-width: 20ch;
+  }
+</style>

@@ -30,14 +30,20 @@ export interface CheckoutBody {
 
 export interface Storefront {
   cart: {
-    get(cartId: string): Cart | null;
-    addItem(cartId: string | null | undefined, body: CartItemBody): Cart | null;
-    updateItem(cartId: string, lineItem: CartLineItemBody): Cart | null;
-    removeItem(cartId: string, lineId: string): Cart | null;
+    get(cartId: string): Promise<Cart | null>;
+    addItem(
+      cartId: string | null | undefined,
+      body: CartItemBody,
+    ): Promise<Cart | null>;
+    updateItem(
+      cartId: string,
+      lineItem: CartLineItemBody,
+    ): Promise<Cart | null>;
+    removeItem(cartId: string, lineId: string): Promise<Cart | null>;
   };
   checkout: {
-    get(cartId: string): Checkout | null;
-    submit(checkout: CheckoutBody): Checkout | null;
+    get(cartId: string): Promise<Checkout | null>;
+    submit(checkout: CheckoutBody): Promise<Checkout | null>;
   };
   products: {
     getAll(params: {

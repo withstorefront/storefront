@@ -14,22 +14,33 @@ function sortProducts(a: Product, b: Product) {
 }
 ---
 
-<h1>{name}</h1>
-<ul>
-  {
-    products.sort(sortProducts).map((product) => (
-      <li>
-        <ProductCard {product} />
-      </li>
-    ))
-  }
-</ul>
+<section>
+  <header>
+    <h1>{name}</h1>
+    <a href="/collections/all">View all</a>
+  </header>
+  <ul>
+    {
+      products.sort(sortProducts).map((product) => (
+        <li>
+          <ProductCard {product} />
+        </li>
+      ))
+    }
+  </ul>
+</section>
 
 <style>
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
   ul {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(20ch, 1fr));
+    gap: var(--space-m-l) var(--space-s-m);
 
     margin: 0;
     padding: 0;
